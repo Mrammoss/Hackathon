@@ -1,0 +1,81 @@
+<%= form_with model: pothole, data: { turbo: false } do |form| %>
+  <% if pothole.errors.any? %>
+    <div class="pt-errors">
+      <strong>Please fix the following:</strong>
+      <ul>
+        <% pothole.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="pt-field">
+    <label>Where is it? Click the map to drop a pin.</label>
+    <div id="map" class="pt-map"></div>
+    <button type="button" id="locate" class="pt-btn-secondary">Use my current location</button>
+    <%= form.hidden_field :latitude %>
+    <%= form.hidden_field :longitude %>
+  </div>
+
+  <div class="pt-field">
+    <%= form.label :description, "What does it look like?" %>
+    <%= form.text_area :description, rows: 3, placeholder: "e.g. Deep hole in the right lane, about 2 feet wide" %>
+  </div>
+
+  <div class="pt-field">
+    <%= form.label :address, "Street / nearest address (optional)" %>
+    <%= form.text_field :address %>
+  </div>
+
+  <div class="pt-field">
+    <%= form.label :severity, "How bad is it?" %>
+    <%= form.select :severity, Pothole::SEVERITIES.map { |value, label| [label, value] } %>
+  </div>
+
+  <div class="pt-actions">
+    <%= form.submit "Submit report", class: "pt-btn" %>
+  </div>
+<% end %>
+
+<script>
+(function () {
+  var latEl = document.getElementById("pothole_latitude");
+  var lngEl = document.getElementById("pothole_longitude");
+  var map = L.map("map").setView([39.5, -98.35], 4);
+  L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}", {
+    maxZoom: 19,
+    attribution: "Tiles &copy; Esri &copy; CARTO"
+  }).addTo(map);
+
+  var marker = null;
+  function setPoint(lat, lng) {
+    if (marker) { marker.setLatLng([lat, lng]); }
+    else { marker = L.marker([lat, lng]).addTo(map); }
+    latEl.value = lat.toFixed(6);
+    lngEl.value = lng.toFixed(6);
+  }
+
+  map.on("click", function (e) { setPoint(e.latlng.lat, e.latlng.lng); });
+
+  if (latEl.value && lngEl.value) {
+    var la = parseFloat(latEl.value), ln = parseFloat(lngEl.value);
+    setPoint(la, ln);
+    map.setView([la, ln], 16);
+  } else if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(function (pos) {
+      map.setView([pos.coords.latitude, pos.coords.longitude], 15);
+    });
+  }
+
+  document.getElementById("locate").addEventListener("click", function () {
+    if (!navigator.geolocation) { alert("Geolocation isn't supported by this browser."); return; }
+    navigator.geolocation.getCurrentPosition(function (pos) {
+      setPoint(pos.coords.latitude, pos.coords.longitude);
+      map.setView([pos.coords.latitude, pos.coords.longitude], 17);
+    }, function () {
+      alert("Couldn't get your location. Click the map to place the pin instead.");
+    });
+  });
+})();
+</script>

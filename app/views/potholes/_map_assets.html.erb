@@ -1,0 +1,26 @@
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+  body { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; margin: 0; background: #f6f7f9; color: #1f2933; }
+  .pt-wrap { max-width: 860px; margin: 0 auto; padding: 16px; }
+  .pt-header { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .pt-header h1 { margin: 8px 0; font-size: 1.6rem; }
+  .pt-btn, .pt-btn-secondary { display: inline-block; padding: 10px 16px; border-radius: 8px; border: 0; cursor: pointer;
+    font-size: 1rem; text-decoration: none; background: #d9480f; color: #fff; }
+  .pt-btn-secondary { background: #e4e7eb; color: #1f2933; }
+  .pt-map { height: 420px; border-radius: 10px; border: 1px solid #cbd2d9; margin: 12px 0; }
+  .pt-notice { background: #e6fcf5; border: 1px solid #96f2d7; padding: 10px 14px; border-radius: 8px; }
+  .pt-errors { background: #fff5f5; border: 1px solid #ffa8a8; padding: 10px 14px; border-radius: 8px; }
+  .pt-errors ul { margin: 6px 0 0 18px; padding: 0; }
+  .pt-list { list-style: none; padding: 0; margin: 0; }
+  .pt-list li { background: #fff; border: 1px solid #e4e7eb; border-radius: 8px; padding: 12px 14px; margin-bottom: 8px; }
+  .pt-list a { color: inherit; text-decoration: none; }
+  .pt-meta { color: #616e7c; font-size: .85rem; margin-top: 4px; }
+  .pt-badge { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: .75rem; font-weight: 600; color: #fff; }
+  .pt-sev-1 { background: #f59f00; } .pt-sev-2 { background: #e8590c; } .pt-sev-3 { background: #c92a2a; }
+  .pt-field { margin: 14px 0; }
+  .pt-field label { display: block; font-weight: 600; margin-bottom: 4px; }
+  .pt-field input[type=text], .pt-field textarea, .pt-field select { width: 100%; box-sizing: border-box; padding: 9px; font-size: 1rem;
+    border: 1px solid #cbd2d9; border-radius: 6px; background: #fff; }
+  .pt-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 8px; }
+</style>
