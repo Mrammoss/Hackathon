@@ -1,0 +1,33 @@
+<%= render "potholes/map_assets" %>
+
+<div class="pt-wrap" data-turbo="false">
+  <div class="pt-header">
+    <h1>Pothole report</h1>
+    <%= link_to "Back to map", root_path, class: "pt-btn-secondary" %>
+  </div>
+
+  <% if notice %><p class="pt-notice"><%= notice %></p><% end %>
+
+  <p>
+    <span class="pt-badge pt-sev-<%= @pothole.severity %>"><%= @pothole.severity_label %></span>
+    <strong><%= @pothole.description %></strong>
+  </p>
+  <p class="pt-meta">
+    <%= @pothole.address.presence || "#{@pothole.latitude.to_f.round(5)}, #{@pothole.longitude.to_f.round(5)}" %>
+    &middot; reported <%= time_ago_in_words(@pothole.created_at) %> ago
+  </p>
+
+  <div id="map" class="pt-map"></div>
+</div>
+
+<script>
+(function () {
+  var lat = <%= @pothole.latitude.to_f %>, lng = <%= @pothole.longitude.to_f %>;
+  var map = L.map("map").setView([lat, lng], 17);
+  L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}", {
+    maxZoom: 19,
+    attribution: "Tiles &copy; Esri &copy; CARTO"
+  }).addTo(map);
+  L.marker([lat, lng]).addTo(map);
+})();
+</script>

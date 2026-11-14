@@ -1,0 +1,83 @@
+<%= render "potholes/map_assets" %>
+
+<div class="pt-wrap" data-turbo="false">
+  <div class="pt-header">
+    <h1>Pothole Tracker</h1>
+    <%= link_to "Report a pothole", new_pothole_path, class: "pt-btn" %>
+  </div>
+
+  <% if notice %><p class="pt-notice"><%= notice %></p><% end %>
+
+  <div id="map" class="pt-map"></div>
+
+  <h2>Recent reports (<%= @potholes.length %>)</h2>
+  <% if @potholes.empty? %>
+    <p>No potholes reported yet. Be the first!</p>
+  <% end %>
+
+  <ul class="pt-list">
+    <% @potholes.each do |pothole| %>
+      <li>
+        <%= link_to pothole_path(pothole) do %>
+          <span class="pt-badge pt-sev-<%= pothole.severity %>"><%= pothole.severity_label %></span>
+          <strong><%= truncate(pothole.description, length: 90) %></strong>
+          <div class="pt-meta">
+            <%= pothole.address.presence || "#{pothole.latitude.to_f.round(5)}, #{pothole.longitude.to_f.round(5)}" %>
+            &middot; <%= time_ago_in_words(pothole.created_at) %> ago
+          </div>
+        <% end %>
+      </li>
+    <% end %>
+  </ul>
+</div>
+
+<script>
+(function () {
+  var potholes = <%= raw json_escape(@potholes.map { |p|
+    { id: p.id, lat: p.latitude.to_f, lng: p.longitude.to_f, description: p.description,
+      severity: p.severity, label: p.severity_label, address: p.address, url: pothole_path(p) }
+  }.to_json) %>;
+
+  var colors = { 1: "#f59f00", 2: "#e8590c", 3: "#c92a2a" };
+  var map = L.map("map").setView([39.5, -98.35], 4);
+  L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}", {
+    maxZoom: 19,
+    attribution: "Tiles &copy; Esri &copy; CARTO"
+  }).addTo(map);
+
+  var points = [];
+  potholes.forEach(function (p) {
+    var marker = L.circleMarker([p.lat, p.lng], {
+      radius: 9, color: "#fff", weight: 2, fillColor: colors[p.severity] || "#868e96", fillOpacity: 0.95
+    }).addTo(map);
+
+    // Build popup with DOM nodes so user text can't inject HTML
+    var box = document.createElement("div");
+    var title = document.createElement("strong");
+    title.textContent = p.label;
+    var desc = document.createElement("p");
+    desc.textContent = p.description;
+    var link = document.createElement("a");
+    link.href = p.url;
+    link.textContent = "Details";
+    box.appendChild(title);
+    box.appendChild(desc);
+    if (p.address) {
+      var addr = document.createElement("div");
+      addr.textContent = p.address;
+      box.appendChild(addr);
+    }
+    box.appendChild(link);
+    marker.bindPopup(box);
+    points.push([p.lat, p.lng]);
+  });
+
+  if (points.length > 0) {
+    map.fitBounds(points, { padding: [40, 40], maxZoom: 16 });
+  } else if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(function (pos) {
+      map.setView([pos.coords.latitude, pos.coords.longitude], 14);
+    });
+  }
+})();
+</script>
