@@ -1,0 +1,5 @@
+services:
+  - type: web
+    name: pothole-tracker-static
+    runtime: static
+    staticPublishPath: ./site

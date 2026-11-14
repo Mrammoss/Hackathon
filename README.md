@@ -23,13 +23,11 @@ Things you may want to cover:
 
 * ...
 
-## Deploying on Render
+## Deploying the static site on Render
 
-The root `render.yaml` defines a Render web service and PostgreSQL database.
-Create a Blueprint for this repository and select the branch containing these
-changes. When prompted, set `RAILS_MASTER_KEY` to the key that decrypts
-`config/credentials.yml.enc`; do not commit or share the key. Render runs
-database preparation at service startup.
+The root `render.yaml` publishes the informational page in `site/` as a Render
+Static Site. Create a Blueprint for this repository and select the branch
+containing these changes. No app server, database, or secret is required.
 
-The free PostgreSQL plan may have usage limits or expiration. Upgrade the
-database plan in Render before relying on it for long-term data.
+This static preview does not accept or store pothole reports. The Rails app
+remains separate and would need a web service and database for live reporting.
