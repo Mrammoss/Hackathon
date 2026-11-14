@@ -31,3 +31,5 @@ containing these changes. No app server, database, or secret is required.
 
 This static preview does not accept or store pothole reports. The Rails app
 remains separate and would need a web service and database for live reporting.
+
+https://fictional-barnacle-g4qr9ggqpgxrh9g67-3000.app.github.dev/
